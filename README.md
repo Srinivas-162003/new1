@@ -44,10 +44,6 @@ streamlit run src/app.py
 - I added a simple tool-routing step so the agent can decide when Arxiv is relevant.
 - I cap the context window by characters and include citations to reduce hallucinations.
 
-## Limitations
-- PDF extraction quality varies by document layout.
-- The vision step is optional because it is slower and may increase cost.
-- Tables are extracted as best-effort markdown; complex tables may degrade.
 
 ## Security and Enterprise Considerations
 - Secrets are injected via environment variables only.
