@@ -18,6 +18,56 @@ from utils.cache import compute_file_hash, index_paths
 from agent.qa_agent import answer_query
 
 
+def _save_documents(path: str, documents: List[DocumentRecord]) -> None:
+    payload = []
+    for doc in documents:
+        payload.append(
+            {
+                "doc_id": doc.doc_id,
+                "title": doc.title,
+                "path": doc.path,
+                "sections": [
+                    {
+                        "title": section.title,
+                        "page": section.page,
+                        "content": section.content,
+                        "tables": section.tables,
+                        "vision_notes": section.vision_notes,
+                    }
+                    for section in doc.sections
+                ],
+            }
+        )
+    with open(path, "w", encoding="utf-8") as handle:
+        import json
+
+        json.dump(payload, handle, indent=2)
+
+
+def _load_documents(path: str) -> List[DocumentRecord]:
+    import json
+
+    with open(path, "r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+
+    documents: List[DocumentRecord] = []
+    for item in payload:
+        doc = DocumentRecord(doc_id=item["doc_id"], title=item["title"], path=item["path"], sections=[])
+        for section in item.get("sections", []):
+            doc.sections.append(
+                SectionRecord(
+                    title=section["title"],
+                    page=section["page"],
+                    content=section["content"],
+                    tables=section.get("tables", ""),
+                    vision_notes=section.get("vision_notes", ""),
+                )
+            )
+        documents.append(doc)
+
+    return documents
+
+
 st.set_page_config(page_title="Document Q&A Agent", layout="wide")
 
 st.title("Document Q&A Agent")
@@ -90,53 +140,3 @@ if st.button("Ask"):
         if answer.extra and answer.extra.get("arxiv"):
             st.subheader("Arxiv Results")
             st.write(answer.extra["arxiv"])
-
-
-def _save_documents(path: str, documents: List[DocumentRecord]) -> None:
-    payload = []
-    for doc in documents:
-        payload.append(
-            {
-                "doc_id": doc.doc_id,
-                "title": doc.title,
-                "path": doc.path,
-                "sections": [
-                    {
-                        "title": section.title,
-                        "page": section.page,
-                        "content": section.content,
-                        "tables": section.tables,
-                        "vision_notes": section.vision_notes,
-                    }
-                    for section in doc.sections
-                ],
-            }
-        )
-    with open(path, "w", encoding="utf-8") as handle:
-        import json
-
-        json.dump(payload, handle, indent=2)
-
-
-def _load_documents(path: str) -> List[DocumentRecord]:
-    import json
-
-    with open(path, "r", encoding="utf-8") as handle:
-        payload = json.load(handle)
-
-    documents: List[DocumentRecord] = []
-    for item in payload:
-        doc = DocumentRecord(doc_id=item["doc_id"], title=item["title"], path=item["path"], sections=[])
-        for section in item.get("sections", []):
-            doc.sections.append(
-                SectionRecord(
-                    title=section["title"],
-                    page=section["page"],
-                    content=section["content"],
-                    tables=section.get("tables", ""),
-                    vision_notes=section.get("vision_notes", ""),
-                )
-            )
-        documents.append(doc)
-
-    return documents

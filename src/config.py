@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
-GEMINI_MODEL_TEXT = os.getenv("GEMINI_MODEL_TEXT", "gemini-1.5-flash")
-GEMINI_MODEL_VISION = os.getenv("GEMINI_MODEL_VISION", "gemini-1.5-flash")
-GEMINI_MODEL_EMBED = os.getenv("GEMINI_MODEL_EMBED", "models/text-embedding-004")
+GEMINI_MODEL_TEXT = os.getenv("GEMINI_MODEL_TEXT", "gemini-2.5-flash")
+GEMINI_MODEL_VISION = os.getenv("GEMINI_MODEL_VISION", "gemini-2.5-flash")
+GEMINI_MODEL_EMBED = os.getenv("GEMINI_MODEL_EMBED", "models/gemini-embedding-001")
 
 USE_VISION_DEFAULT = os.getenv("USE_VISION", "false").lower() in ("1", "true", "yes")
 TOP_K_DEFAULT = int(os.getenv("TOP_K", "5"))
